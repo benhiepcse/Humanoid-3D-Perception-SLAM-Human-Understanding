@@ -6,8 +6,8 @@
 - **Tên project:** Humanoid 3D Perception, SLAM & Human Understanding
 - **Thời gian:** Tuần 29–36, từ **29/03/2027 đến 23/05/2027**
 - **Hướng phát triển:** Humanoid AI Perception kết hợp Humanoid Robot Localization & Simulation
-- **Thành viên A:** Camera geometry, 3D perception, segmentation, 6D object pose, Visual/Visual-Inertial SLAM và human understanding
-- **Thành viên B:** Sensor/TF integration, ground-truth simulation, localization fusion, ROS 2 runtime và state/map handoff
+- **Hiệp (Thành viên A):** Camera geometry, 3D perception, segmentation, 6D object pose, Visual/Visual-Inertial SLAM và human understanding
+- **Thông (Thành viên B):** Sensor/TF integration, ground-truth simulation, localization fusion, ROS 2 runtime và state/map handoff
 - **Điểm xuất phát:** Kế thừa robot/sensor model từ P01, perception/state infrastructure từ P02, semantic scene graph từ P03 và data/model/runtime conventions từ P04.
 
 ## 2. Mục tiêu, phạm vi và tiêu chí kết thúc
@@ -476,6 +476,12 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ## 5. Backlog theo thứ tự phát triển
 
+### Quy ước thay nguồn học
+
+- Chỉ các nguồn đang được trích dẫn bằng tên file PDF/PPTX được thay bằng YouTube lecture hoặc course đúng chủ đề.
+- Các nguồn vốn đã là link documentation, tutorial, paper, repository, course website hoặc project page được giữ nguyên.
+- Các video thay thế trong P05 đều là từng lecture/video độc lập; Hiệp học **toàn bộ video**. Không dùng một video “full course” chứa nhiều chương nên không cần chỉ định khoảng giây.
+
 ### [P05-I01] — Khóa sensor, frame, localization và map contracts
 
 - **Thực hiện:** Cả hai.
@@ -495,7 +501,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A01] — Monocular camera calibration
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Thu nhiều góc nhìn checkerboard/ChArUco, ước lượng intrinsics và distortion, loại frame kém, đánh giá reprojection error và lưu calibration version. Không chỉ gọi API; phải phân tích pose coverage, overfitting theo số ảnh và undistortion quality.
 - **Kiến thức:**
   - Camera calibration — [OpenCV official calibration tutorial](https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html).
@@ -511,12 +517,12 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A02] — Stereo calibration, rectification và epipolar geometry
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Ước lượng stereo extrinsics, rectify image pair và kiểm tra epipolar lines. Sau đó xây feature matching, essential/fundamental matrix, RANSAC và triangulation baseline. Phải kiểm tra cheirality, disparity/depth sign và degenerate low-parallax cases.
 - **Kiến thức:**
   - Epipolar geometry — [OpenCV official tutorial](https://docs.opencv.org/4.x/da/de9/tutorial_py_epipolar_geometry.html).
   - Feature matching — [OpenCV official matcher tutorial](https://docs.opencv.org/4.x/dc/dc3/tutorial_py_matcher.html).
-  - Stereo vision — `Stero/lecture10.pdf`, `Stero/lecture12.pdf`, `Stero/lecture13.pdf`.
+  - Simple stereo, epipolar geometry và depth from disparity — [Columbia FPCV: Simple Stereo](https://www.youtube.com/watch?v=hUVyDabn1Mg), [Epipolar Geometry](https://www.youtube.com/watch?v=6kpBqfgSPRc), [Computing Depth](https://www.youtube.com/watch?v=OYwm4VM6uNg) — học toàn bộ ba video.
 - **Các file thực hiện:**
   - `src/p05_core/calibration/stereo.py` — stereo calibration/rectification.
   - `src/p05_core/geometry/features.py` — feature detection/matching/outlier filtering.
@@ -528,7 +534,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-B01] — Sensor trajectory, ground truth và calibration TF
 
-- **Thực hiện:** Thành viên B.
+- **Thực hiện:** Thông.
 - **Mô tả:** Tạo repeatable head/base sensor trajectories và calibration target poses trong Gazebo. Publish evaluator-only ground truth, camera–IMU/base transforms và deterministic clocks. Motion phải đủ excitation cho hand–eye/VIO nhưng không cần walking controller.
 - **Kiến thức:**
   - Rigid-body transformations — [Modern Robotics, Chapter 3](https://modernrobotics.northwestern.edu/nu-gm-book-resource/chapter-3-rigid-body-motions/).
@@ -543,7 +549,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A03] — Hand–eye calibration và PnP pose estimation
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Ước lượng transform từ head camera đến robot base/kinematic chain và kiểm tra bằng closed transform loops. Triển khai PnP/RANSAC cho known 3D–2D correspondences, chuyển covariance/quality vào pose contract và từ chối geometry suy biến.
 - **Kiến thức:**
   - Pose estimation/PnP — [OpenCV official pose tutorial](https://docs.opencv.org/4.x/d7/d53/tutorial_py_pose.html).
@@ -561,7 +567,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 ### [P05-I02] — Calibration-to-point-cloud integration
 
 - **Thực hiện:** Cả hai.
-- **Mô tả:** Nạp calibration versions vào ROS camera info và point-cloud projection. Thành viên A kiểm tra geometry; Thành viên B kiểm tra TF/timestamps. Một RGB-D pixel fixture phải project đúng sang camera, base và world/map evaluator frames trong tolerance.
+- **Mô tả:** Nạp calibration versions vào ROS camera info và point-cloud projection. Hiệp kiểm tra geometry; Thông kiểm tra TF/timestamps. Một RGB-D pixel fixture phải project đúng sang camera, base và world/map evaluator frames trong tolerance.
 - **Các file thực hiện:**
   - `src/p05_core/pointcloud/processing.py` — calibrated RGB-D projection.
   - `ros2_ws/src/p05_runtime/p05_runtime/pointcloud_node.py` — ROS PointCloud2 runtime.
@@ -571,7 +577,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A04] — Point-cloud processing và ICP registration
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Xây RGB-D-to-cloud, crop/range filter, voxel downsampling, statistical/radius outlier removal và normal estimation. So sánh point-to-point với point-to-plane ICP, báo fitness/RMSE và convergence; initial alignment kém không được xem là registration thành công.
 - **Kiến thức:**
   - Point-cloud processing — [Open3D official point cloud tutorial](https://www.open3d.org/docs/latest/tutorial/geometry/pointcloud.html).
@@ -586,11 +592,11 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A05] — RGB-D integration và semantic map nền
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Tích hợp registered RGB-D frames thành TSDF/voxel hoặc equivalent map và xuất mesh/cloud artifact. P03 semantic object IDs được liên kết với map landmarks; dynamic humans bị loại khỏi static fusion. Map lưu calibration/config/source-run hashes.
 - **Kiến thức:**
   - RGB-D integration — [Open3D official integration tutorial](https://www.open3d.org/docs/latest/tutorial/t_reconstruction_system/integration.html).
-  - Graph representation — `AI-ADL-CH05.1.pdf`, `AI-ADL-CH05.2.pdf`.
+  - Graph representation và graph-level features — [Stanford CS224W: Traditional Feature-based Methods — Graph](https://www.youtube.com/watch?v=buzsHTa4Hgs) — học toàn bộ video.
 - **Các file thực hiện:**
   - `src/p05_core/pointcloud/integration.py` — multi-frame RGB-D/TSDF integration.
   - `src/p05_core/mapping/semantic_map.py` — object landmarks and dynamic layer.
@@ -601,7 +607,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-B02] — ROS 2 localization và map runtime
 
-- **Thực hiện:** Thành viên B.
+- **Thực hiện:** Thông.
 - **Mô tả:** Cấu hình ROS graph cho odometry/localization/map outputs và quản lý `map→odom` correction mà không làm `odom→base_link` nhảy. Thiết lập QoS, timeout, lifecycle và map save/load service behavior. Tracking lost phải truyền tới consumers rõ ràng.
 - **Kiến thức:**
   - ROS 2 localization transforms — [Nav2 transformation setup](https://docs.nav2.org/setup_guides/transformation/setup_transforms.html).
@@ -629,10 +635,10 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A06] — Semantic, instance và promptable segmentation
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Đóng gói một semantic/instance model và Segment Anything-style baseline dưới cùng mask contract. So sánh mIoU, mask AP, boundary quality, latency và memory. P03 language grounding có thể cung cấp prompt/box, nhưng output mask phải gắn source model/prompt/confidence.
 - **Kiến thức:**
-  - CNN/backbones — `AI-ADL-CH01.1.pdf` đến `AI-ADL-CH02.2.pdf`, cùng các file `backbones/ResNet.pdf`, `backbones/MobileNetV2.pdf` đã dùng ở P02.
+  - CNN backbones, AlexNet/VGG/GoogLeNet/ResNet và kiến trúc hiệu quả — [Stanford CS231n: CNN Architectures](https://www.youtube.com/watch?v=DAOcjicFr1Y) — học toàn bộ video.
   - Segment Anything — [Meta AI official research page](https://ai.meta.com/research/publications/segment-anything/).
   - MMSegmentation inference — [official documentation](https://mmsegmentation.readthedocs.io/en/latest/user_guides/3_inference.html).
 - **Các file thực hiện:**
@@ -646,12 +652,12 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A07] — PointNet/PointNet++ 3D learning baseline
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Xây PointNet và PointNet++ adapter cho point-cloud classification hoặc part/semantic segmentation trên project object subset. Sampling, normalization và augmentation chỉ fit/derive từ train. Kiểm tra permutation invariance và độ bền với point dropout/density variation.
 - **Kiến thức:**
   - PointNet paper — [arXiv:1612.00593](https://arxiv.org/abs/1612.00593).
   - PointNet++ paper — [arXiv:1706.02413](https://arxiv.org/abs/1706.02413).
-  - Graph Neural Networks — `AI-ADL-CH04.1.pdf` đến `AI-ADL-CH04.3.pdf` làm kiến thức kết hợp về irregular structures.
+  - Graph Neural Networks cho irregular structures — [Stanford CS224W: Deep Learning for Graphs](https://www.youtube.com/watch?v=ZrDpzzVWwFs) — học toàn bộ video.
 - **Các file thực hiện:**
   - `src/p05_core/perception/pointnet.py` — PointNet/PointNet++ adapters.
   - `src/p05_core/pointcloud/processing.py` — sampling/normalization/augmentation.
@@ -663,7 +669,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A08] — 3D object và 6D pose estimation
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Chuyển segmentation mask/depth thành centroid, oriented 3D bbox và pose candidate; dùng known object mesh/points để refine 6D pose. Evaluation phải xử lý symmetric objects và dùng BOP-compatible metrics thay vì raw Euler-angle error duy nhất.
 - **Kiến thức:**
   - BOP benchmark paper — [arXiv:1808.08319](https://arxiv.org/abs/1808.08319).
@@ -692,7 +698,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A09] — Visual Odometry baseline
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Xây feature-based stereo/RGB-D VO từ calibrated matching, depth/PnP, RANSAC và incremental pose. Đánh giá Absolute Trajectory Error, Relative Pose Error, drift, tracking availability và latency. Low texture/motion blur phải tạo degraded/lost state thay vì pose giả.
 - **Kiến thức:**
   - Feature/epipolar/PnP — các OpenCV official tutorials ở A02–A03.
@@ -707,7 +713,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A10] — Visual-Inertial SLAM và relocalization
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Tích hợp ORB-SLAM3 hoặc VINS-style backend để chạy stereo/RGB-D-inertial trajectory, expose tracking/keyframe/relocalization status và covariance proxy. So sánh VO với SLAM có loop closure. Không chỉnh ground-truth alignment trong runtime; alignment chỉ dùng evaluator.
 - **Kiến thức:**
   - ORB-SLAM3 paper — [arXiv:2007.11898](https://arxiv.org/abs/2007.11898).
@@ -724,7 +730,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-B03] — Localization fusion và `map→odom` publication
 
-- **Thực hiện:** Thành viên B.
+- **Thực hiện:** Thông.
 - **Mô tả:** Fuse/select SLAM pose, local odometry và IMU orientation under a deterministic status machine. Preserve continuous `odom`; place loop-closure correction in `map→odom`; publish covariance and source. Full UKF/contact estimator is deferred to P06, but P05 interface must support it.
 - **Kiến thức:**
   - robot_localization ROS 2 package — [ROS Index: robot_localization](https://index.ros.org/p/robot_localization/).
@@ -752,7 +758,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A11] — 2D/3D human pose estimation
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Dùng MMPose hoặc equivalent official model để ước lượng 2D body/hand keypoints, sau đó lift/fuse depth thành 3D skeleton trong `map`/`base_link`. Mỗi keypoint có confidence/visibility; occluded keypoints không được coi là đo chính xác. Benchmark riêng 2D và 3D.
 - **Kiến thức:**
   - MMPose inference — [official user guide](https://github.com/open-mmlab/mmpose/blob/main/docs/en/user_guides/inference.md).
@@ -768,7 +774,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A12] — Multi-person tracking và ReID
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Nâng P02 tracker thành human-specific tracking với pose/motion association và optional ReID embedding. Track IDs chỉ có ý nghĩa trong run, không ánh xạ danh tính. Đánh giá IDF1/HOTA hoặc MOTA cùng ID switches, occlusion recovery và latency.
 - **Kiến thức:**
   - ByteTrack paper — [arXiv:2110.06864](https://arxiv.org/abs/2110.06864).
@@ -784,11 +790,11 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A13] — Action, gesture và intention estimation
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Xây temporal classifier nhận RGB/skeleton sequence để phân loại `standing`, `walking`, `approaching`, `leaving`, `waving`, `reaching` và `fallen`. Intent layer kết hợp action, position, velocity và uncertainty thành operational state; không tuyên bố suy đoán tâm lý con người.
 - **Kiến thức:**
   - Video/action recognition — [MMAction2 official documentation](https://mmaction2.readthedocs.io/en/latest/user_guides/inference.html).
-  - RNN/LSTM/GRU sequence modeling — `3.1.pptx`, `3.2.pptx`, `3.3.pptx`; `AI-ADL-CH03.1.pdf` đến `AI-ADL-CH03.3.pdf`.
+  - RNN/LSTM sequence modeling cho temporal action recognition — [Stanford CS231n: Recurrent Neural Networks](https://www.youtube.com/watch?v=6niqTuYFZLQ) — học toàn bộ video.
 - **Các file thực hiện:**
   - `src/p05_core/humans/action.py` — temporal action classifier.
   - `src/p05_core/humans/intent.py` — operational intent state and uncertainty.
@@ -800,7 +806,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-B04] — Human-aware ROS and safety handoff
 
-- **Thực hiện:** Thành viên B.
+- **Thực hiện:** Thông.
 - **Mô tả:** Publish human states in correct frames and connect them to P02 safety/P07 consumer interface. Define protective distance, stale/timeout and dynamic-layer behavior. P05 only publishes perception-derived state; it does not decide final certified safety action.
 - **Kiến thức:**
   - ROS 2 message/QoS and TF — [ROS 2 Jazzy documentation](https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Quality-of-Service-Settings.html).
@@ -828,11 +834,11 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-A14] — Final AI Perception benchmark và failure analysis
 
-- **Thực hiện:** Thành viên A.
+- **Thực hiện:** Hiệp.
 - **Mô tả:** Khóa calibration, segmentation, PointNet, object-pose, SLAM và human model versions; chạy held-out suite một lần. Failure slices gồm blur, low texture, lighting, depth holes, symmetry, occlusion, crowded humans, domain shift và stale transforms. Không tuning trên final test.
 - **Kiến thức:**
-  - Model evaluation — `AI-BML-CH01.2.pdf`.
-  - Generative/AI model evaluation and responsibility — `AI-GenAI-CH04.1.pdf`, `AI-GenAI-CH04.2.pdf`, `AI-GenAI-CH05.1.pdf`, `AI-GenAI-CH05.2.pdf`.
+  - Model evaluation, debugging và error analysis — [Stanford CS229: Debugging ML Models and Error Analysis](https://www.youtube.com/watch?v=ORrStCArmP4) — học toàn bộ video.
+  - Responsible AI và human-centered evaluation — [Stanford CS231n: Human-Centered AI](https://www.youtube.com/watch?v=g8UaBfj6Sh8) — học toàn bộ video.
 - **Các file thực hiện:**
   - `models/registry.json` — freeze active/fallback model versions.
   - `maps/registry.json` — freeze compatible map versions.
@@ -845,7 +851,7 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ### [P05-B05] — Final localization/runtime benchmark
 
-- **Thực hiện:** Thành viên B.
+- **Thực hiện:** Thông.
 - **Mô tả:** Fault-inject camera/IMU dropout, delayed TF, loop closure, node restart và map reload. Measure runtime rate, latency, memory, TF continuity, source switching and stale propagation. Release is blocked by frame/time contract violations.
 - **Kiến thức:**
   - ROS 2 lifecycle/QoS — [ROS 2 Jazzy managed nodes](https://design.ros2.org/articles/node_lifecycle.html) và [QoS](https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Quality-of-Service-Settings.html).
@@ -876,16 +882,16 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 ## 6. Lịch tuần 29–36
 
-| Tuần | Thời gian | Kiến thức cần hoàn thành | Thành viên A | Thành viên B | Tích hợp/Deliverable | Giờ dự kiến |
+| Tuần | Thời gian | Kiến thức cần hoàn thành | Hiệp | Thông | Tích hợp/Deliverable | Giờ dự kiến |
 |---:|---|---|---|---|---|---|
-| 29 | 29/03–04/04/2027 | Camera model, calibration, TF/frames | A01 | B01 | I01; contracts và calibration dataset | A: 20h, B: 18h |
-| 30 | 05/04–11/04/2027 | Stereo, epipolar, matching, PnP, hand–eye | A02, A03 | B01 support | I02; verified calibration-to-cloud | A: 24h, B: 16h |
-| 31 | 12/04–18/04/2027 | Open3D point cloud, ICP, RGB-D integration | A04, A05 | B02 | I03; registered semantic map v1 | A: 24h, B: 18h |
-| 32 | 19/04–25/04/2027 | Segmentation, PointNet/PointNet++, 6D BOP pose | A06, A07, A08 | B02 support | I04; 3D object landmarks in map | A: 28h, B: 16h |
-| 33 | 26/04–02/05/2027 | VO, ATE/RPE, ORB-SLAM3/VIO | A09, A10 | B03 | I05; localization/map release candidate | A: 26h, B: 22h |
-| 34 | 03/05–09/05/2027 | 2D/3D human pose and anonymous tracking | A11, A12 | B04 | HumanState interface and dynamic layer | A: 26h, B: 20h |
-| 35 | 10/05–16/05/2027 | Action/gesture/intention and human-aware mapping | A13 | B04 | I06; human-understanding integrated demo | A: 24h, B: 20h |
-| 36 | 17/05–23/05/2027 | Failure analysis, runtime verification and handoff | A14 | B05 | I07; final report, map, video and P06/P07 contracts | A: 24h, B: 24h |
+| 29 | 29/03–04/04/2027 | Camera model, calibration, TF/frames | A01 | B01 | I01; contracts và calibration dataset | Hiệp: 20h, Thông: 18h |
+| 30 | 05/04–11/04/2027 | Stereo, epipolar, matching, PnP, hand–eye | A02, A03 | B01 support | I02; verified calibration-to-cloud | Hiệp: 24h, Thông: 16h |
+| 31 | 12/04–18/04/2027 | Open3D point cloud, ICP, RGB-D integration | A04, A05 | B02 | I03; registered semantic map v1 | Hiệp: 24h, Thông: 18h |
+| 32 | 19/04–25/04/2027 | Segmentation, PointNet/PointNet++, 6D BOP pose | A06, A07, A08 | B02 support | I04; 3D object landmarks in map | Hiệp: 28h, Thông: 16h |
+| 33 | 26/04–02/05/2027 | VO, ATE/RPE, ORB-SLAM3/VIO | A09, A10 | B03 | I05; localization/map release candidate | Hiệp: 26h, Thông: 22h |
+| 34 | 03/05–09/05/2027 | 2D/3D human pose and anonymous tracking | A11, A12 | B04 | HumanState interface and dynamic layer | Hiệp: 26h, Thông: 20h |
+| 35 | 10/05–16/05/2027 | Action/gesture/intention and human-aware mapping | A13 | B04 | I06; human-understanding integrated demo | Hiệp: 24h, Thông: 20h |
+| 36 | 17/05–23/05/2027 | Failure analysis, runtime verification and handoff | A14 | B05 | I07; final report, map, video and P06/P07 contracts | Hiệp: 24h, Thông: 24h |
 
 ### Điều kiện chuyển tuần
 
@@ -916,38 +922,38 @@ p05_humanoid_3d_perception_slam_human_understanding/
 
 | Nguồn | Kiến thức | Task | Thành viên | Sản phẩm |
 |---|---|---|---|---|
-| OpenCV Camera Calibration | Intrinsics/distortion | A01 | A | Camera calibration |
-| OpenCV Epipolar Geometry/Matcher | E/F matrix, matching | A02 | A | Stereo geometry |
-| OpenCV Pose Estimation | PnP | A03, A08 | A | Camera/object pose |
-| OpenCV calib3d module | Hand–eye calibration | A03 | A | Camera-to-base extrinsic |
-| CV `Stero/lecture10.pdf`, `lecture12.pdf`, `lecture13.pdf` | Stereo/depth | A02 | A | Stereo pipeline |
-| Open3D Point Cloud | Filtering/normals | A04 | A | Processed cloud |
-| Open3D ICP | Registration | A04 | A | Registered cloud |
-| Open3D RGB-D Integration | TSDF/map | A05 | A | 3D map |
-| `AI-ADL-CH04.1.pdf`–`CH04.3.pdf` | GNN/irregular structure | A07 | A | Point-cloud learning context |
-| `AI-ADL-CH05.1.pdf`, `CH05.2.pdf` | Graph representation | A05 | A | Semantic map |
-| `AI-ADL-CH01.*`, `CH02.*`, ResNet/MobileNet files | CNN/backbone | A06 | A | Segmentation adapters |
-| Meta Segment Anything | Promptable segmentation | A06 | A | SAM-style baseline |
-| MMSegmentation | Semantic/instance inference | A06 | A | Segmentation runtime |
-| PointNet paper | Point-set learning | A07 | A | PointNet baseline |
-| PointNet++ paper | Hierarchical point learning | A07 | A | PointNet++ baseline |
-| BOP paper/website | 6D pose/evaluation | A08 | A | 6D pose benchmark |
-| ORB-SLAM3 paper/repository | VO/VIO/SLAM | A09, A10 | A | Localization backend |
-| VINS-Mono repository | Visual-inertial reference | A10 | A | VIO comparison |
-| MMPose guides | 2D/3D human pose | A11 | A | Human skeleton |
-| ByteTrack paper | Multi-object tracking | A12 | A | Human tracker |
-| Torchreid docs | Re-identification | A12 | A | Anonymous ReID association |
-| MMAction2 docs | Action recognition | A13 | A | Action classifier |
-| NLP `3.1.pptx`–`3.3.pptx`; ADL CH03 | Temporal modeling | A13 | A | Action/intent sequence model |
-| `AI-BML-CH01.2.pdf` | Evaluation | A14 | A | Final benchmark |
-| `AI-GenAI-CH04.*`, `CH05.*` | Evaluation/responsibility | A14 | A | Failure/privacy report |
-| Modern Robotics Ch.3 | SE(3)/frames | B01 | B | Sensor trajectory/TF |
-| ROS 2 TF2/Nav2 transforms | Frame policy | I01, B01, B02 | Both/B | TF/localization runtime |
-| slam_toolbox docs | ROS SLAM/map interface | B02 | B | Map lifecycle |
-| ROS Index: robot_localization | Localization fusion | B03 | B | Fused pose/status |
-| MIT Underactuated Robotics: State Estimation | Estimation context | B03 | B | P06-ready interface |
-| ROS 2 QoS/lifecycle | Runtime reliability | B04, B05 | B | Reliable ROS graph |
-| Nav2 costmap concepts | Dynamic human layer | B04 | B | Human-aware handoff |
+| [OpenCV Camera Calibration](https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html) | Intrinsics/distortion | A01 | Hiệp | Camera calibration |
+| [OpenCV Epipolar Geometry](https://docs.opencv.org/4.x/da/de9/tutorial_py_epipolar_geometry.html) / [Matcher](https://docs.opencv.org/4.x/dc/dc3/tutorial_py_matcher.html) | E/F matrix, matching | A02 | Hiệp | Stereo geometry |
+| [OpenCV Pose Estimation](https://docs.opencv.org/4.x/d7/d53/tutorial_py_pose.html) | PnP | A03, A08 | Hiệp | Camera/object pose |
+| [OpenCV calib3d module](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html) | Hand–eye calibration | A03 | Hiệp | Camera-to-base extrinsic |
+| [Columbia FPCV: Simple Stereo](https://www.youtube.com/watch?v=hUVyDabn1Mg), [Epipolar Geometry](https://www.youtube.com/watch?v=6kpBqfgSPRc), [Computing Depth](https://www.youtube.com/watch?v=OYwm4VM6uNg) | Stereo/depth | A02 | Hiệp | Stereo pipeline |
+| [Open3D Point Cloud](https://www.open3d.org/docs/latest/tutorial/geometry/pointcloud.html) | Filtering/normals | A04 | Hiệp | Processed cloud |
+| [Open3D ICP](https://www.open3d.org/docs/latest/tutorial/pipelines/icp_registration.html) | Registration | A04 | Hiệp | Registered cloud |
+| [Open3D RGB-D Integration](https://www.open3d.org/docs/latest/tutorial/t_reconstruction_system/integration.html) | TSDF/map | A05 | Hiệp | 3D map |
+| [Stanford CS224W: Deep Learning for Graphs](https://www.youtube.com/watch?v=ZrDpzzVWwFs) | GNN/irregular structure | A07 | Hiệp | Point-cloud learning context |
+| [Stanford CS224W: Graph-level Features](https://www.youtube.com/watch?v=buzsHTa4Hgs) | Graph representation | A05 | Hiệp | Semantic map |
+| [Stanford CS231n: CNN Architectures](https://www.youtube.com/watch?v=DAOcjicFr1Y) | CNN/backbone | A06 | Hiệp | Segmentation adapters |
+| [Meta Segment Anything](https://ai.meta.com/research/publications/segment-anything/) | Promptable segmentation | A06 | Hiệp | SAM-style baseline |
+| [MMSegmentation](https://mmsegmentation.readthedocs.io/en/latest/user_guides/3_inference.html) | Semantic/instance inference | A06 | Hiệp | Segmentation runtime |
+| [PointNet paper](https://arxiv.org/abs/1612.00593) | Point-set learning | A07 | Hiệp | PointNet baseline |
+| [PointNet++ paper](https://arxiv.org/abs/1706.02413) | Hierarchical point learning | A07 | Hiệp | PointNet++ baseline |
+| [BOP paper](https://arxiv.org/abs/1808.08319) / [website](https://bop.felk.cvut.cz/home/) | 6D pose/evaluation | A08 | Hiệp | 6D pose benchmark |
+| [ORB-SLAM3 paper](https://arxiv.org/abs/2007.11898) / [repository](https://github.com/UZ-SLAMLab/ORB_SLAM3) | VO/VIO/SLAM | A09, A10 | Hiệp | Localization backend |
+| [VINS-Mono repository](https://github.com/HKUST-Aerial-Robotics/VINS-Mono) | Visual-inertial reference | A10 | Hiệp | VIO comparison |
+| [MMPose inference](https://github.com/open-mmlab/mmpose/blob/main/docs/en/user_guides/inference.md) / [3D pose demo](https://github.com/open-mmlab/mmpose/blob/main/demo/docs/en/3d_human_pose_demo.md) | 2D/3D human pose | A11 | Hiệp | Human skeleton |
+| [ByteTrack paper](https://arxiv.org/abs/2110.06864) | Multi-object tracking | A12 | Hiệp | Human tracker |
+| [Torchreid documentation](https://kaiyangzhou.github.io/deep-person-reid/) | Re-identification | A12 | Hiệp | Anonymous ReID association |
+| [MMAction2 documentation](https://mmaction2.readthedocs.io/en/latest/user_guides/inference.html) | Action recognition | A13 | Hiệp | Action classifier |
+| [Stanford CS231n: Recurrent Neural Networks](https://www.youtube.com/watch?v=6niqTuYFZLQ) | Temporal modeling | A13 | Hiệp | Action/intent sequence model |
+| [Stanford CS229: Debugging ML Models](https://www.youtube.com/watch?v=ORrStCArmP4) | Evaluation/error analysis | A14 | Hiệp | Final benchmark |
+| [Stanford CS231n: Human-Centered AI](https://www.youtube.com/watch?v=g8UaBfj6Sh8) | Responsibility/human-centered evaluation | A14 | Hiệp | Failure/privacy report |
+| [Modern Robotics, Chapter 3](https://modernrobotics.northwestern.edu/nu-gm-book-resource/chapter-3-rigid-body-motions/) | SE(3)/frames | B01 | Thông | Sensor trajectory/TF |
+| [ROS 2 TF2](https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Tf2/Tf2-Main.html) / [Nav2 transforms](https://docs.nav2.org/setup_guides/transformation/setup_transforms.html) | Frame policy | I01, B01, B02 | Thông/Cả hai | TF/localization runtime |
+| [slam_toolbox documentation](https://docs.ros.org/en/ros2_packages/jazzy/api/slam_toolbox/) | ROS SLAM/map interface | B02 | Thông | Map lifecycle |
+| [ROS Index: robot_localization](https://index.ros.org/p/robot_localization/) | Localization fusion | B03 | Thông | Fused pose/status |
+| [MIT Underactuated Robotics: State Estimation](https://underactuated.mit.edu/state_estimation.html) | Estimation context | B03 | Thông | P06-ready interface |
+| [ROS 2 QoS](https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Quality-of-Service-Settings.html) / [Lifecycle](https://design.ros2.org/articles/node_lifecycle.html) | Runtime reliability | B04, B05 | Thông | Reliable ROS graph |
+| [Nav2 costmap concepts](https://docs.nav2.org/configuration/packages/configuring-costmaps.html) | Dynamic human layer | B04 | Thông | Human-aware handoff |
 
 ## 9. Phân loại backlog
 
